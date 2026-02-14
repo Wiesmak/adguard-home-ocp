@@ -1,0 +1,20 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="256" height="256">
+	<style>
+		.s0 { fill: #c22035 } 
+		.s1 { fill: #ac223b } 
+		.s2 { fill: #ffffff } 
+	</style>
+	<g id="logo">
+		<g id="Group-10">
+			<g id="Group-9">
+				<g id="Group-8">
+					<g id="Group-7">
+						<path id="Path" fill-rule="evenodd" class="s0" d="m40.22 12c-8.82 0-19.46 2.07-28.22 6.64 0 9.86-0.12 34.43 28.22 51.21 28.35-16.78 28.23-41.35 28.23-51.21-8.77-4.57-19.41-6.64-28.23-6.64z"/>
+						<path id="Combined-Shape" fill-rule="evenodd" class="s1" d="m40.19 69.84c-28.31-16.79-28.19-41.34-28.19-51.2 8.75-4.56 19.38-6.64 28.19-6.64z"/>
+					</g>
+					<path id="Fill-11" fill-rule="evenodd" class="s2" d="m39.19 50.6l17.07-23c-1.25-1-2.35-0.29-2.95 0.25l-0.02 0.01-14.23 14.8-5.37-6.45c-2.55-2.96-6.03-0.7-6.84-0.11z"/>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>

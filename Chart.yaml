@@ -1,6 +1,7 @@
 apiVersion: v2
 name: adguard-home-ocp
 description: AdGuard Home chart optimized for OpenShift 
+icon: https://raw.githubusercontent.com/Wiesmak/adguard-home-ocp/refs/heads/master/icon.svg
 
 
 type: application
