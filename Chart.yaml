@@ -1,0 +1,10 @@
+apiVersion: v2
+name: adguard-home-ocp
+description: AdGuard Home chart optimized for OpenShift 
+
+
+type: application
+
+version: 0.1.0
+
+appVersion: "0.107.71"

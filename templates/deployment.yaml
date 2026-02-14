@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adguard-openshift.fullname" . }}
+  labels:
+    {{- include "adguard-openshift.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "adguard-openshift.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "adguard-openshift.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: default
+      initContainers:
+        - name: copy-config
+          image: "alpine:3.18"
+          imagePullPolicy: IfNotPresent
+          command: 
+            - "/bin/sh"
+            - "-c"
+            - |
+              mkdir -p /data/conf /data/work
+              
+              if [ ! -f /data/conf/AdGuardHome.yaml ]; then
+                echo "Initializing config..."
+                cp /tmp/config/AdGuardHome.yaml /data/conf/AdGuardHome.yaml
+                echo "Config copied."
+              else
+                echo "Config exists, skipping..."
+              fi
+          volumeMounts:
+            - name: config-template
+              mountPath: /tmp/config
+            - name: data
+              mountPath: /data
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: 
+            - "--config" 
+            - "/opt/adguardhome/conf/AdGuardHome.yaml" 
+            - "--work-dir" 
+            - "/opt/adguardhome/work" 
+            - "--no-check-update"
+          ports:
+            - name: web
+              containerPort: 3000
+              protocol: TCP
+            - name: dns-tcp
+              containerPort: 5353
+              protocol: TCP
+            - name: dns-udp
+              containerPort: 5353
+              protocol: UDP
+          livenessProbe:
+            httpGet:
+              path: /login.html
+              port: web
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: web
+            initialDelaySeconds: 5
+          volumeMounts:
+            - name: data
+              mountPath: /opt/adguardhome/conf
+              subPath: conf
+            - name: data
+              mountPath: /opt/adguardhome/work
+              subPath: work
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config-template
+          configMap:
+            name: {{ include "adguard-openshift.fullname" . }}-config
+        - name: data
+          {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ include "adguard-openshift.fullname" . }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}

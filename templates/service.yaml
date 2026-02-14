@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "adguard-openshift.fullname" . }}-dns
+  labels:
+    {{- include "adguard-openshift.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.dns.type }}
+  externalTrafficPolicy: {{ .Values.service.dns.externalTrafficPolicy }}
+  ports:
+    - port: {{ .Values.service.dns.port }}
+      targetPort: {{ .Values.service.dns.targetPort }}
+      protocol: TCP
+      name: dns-tcp
+    - port: {{ .Values.service.dns.port }}
+      targetPort: {{ .Values.service.dns.targetPort }}
+      protocol: UDP
+      name: dns-udp
+  selector:
+    {{- include "adguard-openshift.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "adguard-openshift.fullname" . }}-web
+  labels:
+    {{- include "adguard-openshift.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.web.type }}
+  ports:
+    - port: {{ .Values.service.web.port }}
+      targetPort: {{ .Values.service.web.targetPort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "adguard-openshift.selectorLabels" . | nindent 4 }}

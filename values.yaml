@@ -1,0 +1,59 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/11notes/adguard
+  pullPolicy: IfNotPresent
+  tag: "0.107.71"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  dns:
+    type: LoadBalancer
+    port: 53
+    targetPort: 5353
+    externalTrafficPolicy: Local
+  web:
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+
+route:
+  enabled: true
+  host: adguard.apps.seiran.gajda.internal
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+
+resources: {}
+  # limits:
+  #   cpu: 500m
+  #   memory: 256Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+persistence:
+  enabled: true
+  storageClass: topolvm-provisioner
+  accessMode: ReadWriteOnce
+  size: 5Gi
